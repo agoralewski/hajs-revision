@@ -13,7 +13,7 @@ object Cats {
 
     Functor[F[_]]{map} ----------
                                  \
-                                  Apply[F[_]]{ap}
+                                  Apply[F[_]]{ap} --> Applicative[F[_]}{pure} -->
                                  /
     Semigroupal[F[_]]{product} --
 
@@ -93,8 +93,20 @@ object Cats {
     def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
   }
 
-
-
+  trait MyApplicative[F[_]] extends MyApply[F] {
+    /**
+     * `pure` lifts any value into the Applicative Functor.
+     *
+     * Example:
+     * {{{
+     * scala> import cats.implicits._
+     *
+     * scala> Applicative[Option].pure(10)
+     * res0: Option[Int] = Some(10)
+     * }}}
+     */
+    def pure[A](x: A): F[A]
+  }
 
 
 
