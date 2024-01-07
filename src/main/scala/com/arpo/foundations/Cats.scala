@@ -50,7 +50,7 @@ object Cats {
   }
 
   trait MyFunctor[F[_]] {
-    def map[A, B](initialValue: F[A])(f: A => B): F[B]
+    def map[A, B](fa: F[A])(f: A => B): F[B]
   }
 
   trait MySemigroupal[F[_]] {
@@ -114,6 +114,8 @@ object Cats {
   }
 
   trait MyMonad[F[_]] extends MyFlatMap[F] with MyApplicative[F] {
+    def map[A, B](fa: F[A])(f: A => B): F[B] =
+      flatMap(fa)(a => pure(f(a)))
   }
 
 
