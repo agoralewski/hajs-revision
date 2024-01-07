@@ -12,9 +12,9 @@ object Cats {
 
     Eq{eqv}
 
-    Functor[F[_]]{map} ----------
-                                 \
-                                  Apply[F[_]]{ap} --> Applicative[F[_]}{pure} --> Monad[F[_]]{}
+    Functor[F[_]]{map} ----------                                               ApplicativeError[F[_], E]{raiseError} --> MonadError[F[_], E]{ensure}
+                                 \                                            /                                          /
+                                  Apply[F[_]]{ap} --> Applicative[F[_]}{pure} --> Monad[F[_]]{} ------------------------
                                  /                \                              /
     Semigroupal[F[_]]{product} --                   FlatMap[F[_]]{flatMap} -----
 
@@ -118,5 +118,14 @@ object Cats {
       flatMap(fa)(a => pure(f(a)))
   }
 
+  trait MyApplicativeError[F[_], E] extends MyApplicative[F] {
+    def raiseError[A](e: E): F[A]
+    def handleErrorWith[A](ma: F[A])(func: E => F[A]): F[A]
+    def handleError[A](ma: F[A])(func: E => A): F[A] = handleErrorWith(ma)(e => pure(func(e)))
+  }
+
+  trait MyMonadError[F[_], E] extends MyApplicativeError[F, E] with MyMonad[F] {
+    def ensure[A](ma: F[A])(error: E)(predicate: A => Boolean): F[A]
+  }
 
 }
