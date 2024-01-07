@@ -1,6 +1,7 @@
 package com.arpo.foundations
 
-import cats.Apply
+
+
 object Cats {
 
 
@@ -13,9 +14,9 @@ object Cats {
 
     Functor[F[_]]{map} ----------
                                  \
-                                  Apply[F[_]]{ap} --> Applicative[F[_]}{pure} -->
-                                 /
-    Semigroupal[F[_]]{product} --
+                                  Apply[F[_]]{ap} --> Applicative[F[_]}{pure} --> Monad[F[_]]{}
+                                 /                \                              /
+    Semigroupal[F[_]]{product} --                   FlatMap[F[_]]{flatMap} -----
 
    */
 
@@ -108,7 +109,12 @@ object Cats {
     def pure[A](x: A): F[A]
   }
 
+  trait MyFlatMap[F[_]] extends MyApply[F] {
+    def flatMap[A, B](ma: F[A])(f: A => F[B]): F[B]
+  }
 
+  trait MyMonad[F[_]] extends MyFlatMap[F] with MyApplicative[F] {
+  }
 
 
 }
